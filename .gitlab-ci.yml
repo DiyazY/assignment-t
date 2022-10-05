@@ -1,6 +1,7 @@
 ui:
+  stage: trigger
   trigger:
     include: src/frontend/.gitlab-ci.yml
     strategy: depend
-  rules:
-    - changes: [src/frontend/*]
+  # rules:
+  #   - changes: [src/frontend/*]
