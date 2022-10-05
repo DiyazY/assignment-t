@@ -11,9 +11,9 @@ test:
   stage: test
   script:
     - npm test
-    - npm run test:coverage
-  artifacts:
-    paths:
-      - coverage
-    untracked: false
-    expire_in: 30 days
+    # - npm run test:coverage
+  # artifacts:
+  #   paths:
+  #     - coverage
+  #   untracked: false
+  #   expire_in: 30 days
