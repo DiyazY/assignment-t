@@ -1,5 +1,5 @@
 ui:
-  stage: trigger
+  stage: test
   trigger:
     include: src/frontend/.gitlab-ci.yml
     strategy: depend
