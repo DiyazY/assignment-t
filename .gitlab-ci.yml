@@ -1,0 +1,6 @@
+ui:
+  trigger:
+    include: src/frontend/.gitlab-ci.yml
+    strategy: depend
+  rules:
+    - changes: [src/frontend/*]
