@@ -1,36 +1,43 @@
 import { render, screen } from "@testing-library/react";
 import Entries from ".";
-import { EntryModel } from "../../models/entryModel";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+import { BASE_URL, RestApiManager } from "../../utils/restApiManager";
+import { RestContext } from "../../App";
 
-jest.mock("./useEntries.ts", () => ({
-  useEntries: (): [date: string, entries: EntryModel[]][] => [
-    [
-      "2022-11-23",
-      [...Array(10)].map((i) => ({
-        date: new Date(2022, 10, 23),
-        name: "Apple",
-        calories: 123,
-      })),
-    ],
-    [
-      "2022-11-24",
-      [...Array(10)].map((i) => ({
-        date: new Date(2022, 10, 24),
-        name: "Orange",
-        calories: 321,
-      })),
-    ],
-  ],
-}));
+const fakeResponse = [
+  ...[...Array(10)].map((i) => ({
+    consumedAt: new Date(2022, 10, 23).toISOString(),
+    productName: "Apple",
+    calories: 123,
+  })),
+  ...[...Array(10)].map((i) => ({
+    consumedAt: new Date(2022, 10, 24).toISOString(),
+    productName: "Orange",
+    calories: 321,
+  })),
+];
 
-// beforeAll(() => {});
-// afterEach(() => {});
-// afterAll(() => {});
+const server = setupServer(
+  rest.get(`${BASE_URL}/api/entries/`, (req, res, ctx) => {
+    return res(ctx.json(fakeResponse));
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => {
+  server.resetHandlers();
+});
+afterAll(() => server.close());
 
 test("renders 20 entries for 2 days", async () => {
-  render(<Entries threshold={2100} />);
+  render(
+    <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <Entries threshold={2100}/>
+    </RestContext.Provider>
+  );
   const entries = await screen.findAllByTestId("entry");
-  const headers = await screen.findAllByTestId("header");
   expect(entries.length).toBe(20);
+  const headers = await screen.findAllByTestId("header");
   expect(headers.length).toBe(2);
 });

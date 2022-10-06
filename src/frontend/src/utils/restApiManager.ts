@@ -1,4 +1,4 @@
-const BASE_URL = "https://localhost:7033";
+export const BASE_URL = "https://localhost:7033";
 
 export class RestApiManager {
   private _defaultOptions: RequestInit;
