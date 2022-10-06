@@ -21,7 +21,7 @@ namespace backend.Controllers
 
         [HttpGet("{userName}")]
         [Authorize(Roles ="Admin")]
-        public ProfileDTO Get([FromRoute] string? userName)
+        public ProfileDTO Get([FromRoute] string userName)
         {
             return ProfileManager.GetProfile(userName);
         }

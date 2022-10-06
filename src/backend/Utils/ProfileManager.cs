@@ -8,7 +8,10 @@ namespace backend.Utils
         public static ProfileDTO GetProfile(string userName)
         {
             ArgumentNullException.ThrowIfNull(userName);
-            var profile = new ProfileDTO { Role = AuthManager.GetUserRole(userName)};
+            var profile = new ProfileDTO {
+                Role = AuthManager.GetUserRole(userName),
+                UserName = userName
+            };
             if(userName == "user1")
             {
                 profile.Threshold = 1800;
