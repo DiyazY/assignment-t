@@ -17,8 +17,8 @@ namespace backend.Controllers
     public class LoginController : Controller
     {
 
-        [HttpPost, Route("login")]
-        public IActionResult Login(LoginDTO loginDTO)
+        [HttpPost]
+        public IActionResult Login([FromBody]LoginDTO loginDTO)
         {
             try
             {
