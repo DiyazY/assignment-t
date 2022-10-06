@@ -28,7 +28,7 @@ jest.mock("./useEntries.ts", () => ({
 // afterAll(() => {});
 
 test("renders 20 entries for 2 days", async () => {
-  render(<Entries userName="diyaz" />);
+  render(<Entries threshold={2100} />);
   const entries = await screen.findAllByTestId("entry");
   const headers = await screen.findAllByTestId("header");
   expect(entries.length).toBe(20);

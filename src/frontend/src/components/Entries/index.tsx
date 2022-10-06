@@ -5,10 +5,11 @@ import GroupHeader from "../GroupHeader";
 import { useEntries } from "./useEntries";
 
 export interface EntriesProps {
-  userName: string;
+  threshold: number;
+  userName?: string;
 }
 
-function Entries({ userName }: EntriesProps):JSX.Element {
+function Entries({ threshold, userName }: EntriesProps): JSX.Element {
   const groupedEntries = useEntries(userName);
   return (
     <>
@@ -23,21 +24,31 @@ function Entries({ userName }: EntriesProps):JSX.Element {
         }}
         subheader={<li />}
       >
-        {groupedEntries.map(([date, entries]) => (
-          <li key={`grouped-by-${date}`}>
-            <ul>
-              <ListSubheader>
-                <GroupHeader text={date} />
-              </ListSubheader>
-              {entries.map((entry, i) => (
-                <Fragment key={`entry-${date}-${i}`}>
-                  <Entry entry={entry} />
-                  {entries.length - 1 !== i && <Divider />}
-                </Fragment>
-              ))}
-            </ul>
-          </li>
-        ))}
+        {groupedEntries.map(([date, entries]) => {
+          const sumOfConsumedCalories = entries.reduce(
+            (prev, curr) => prev + curr.calories,
+            0
+          );
+          return (
+            <li key={`grouped-by-${date}`}>
+              <ul>
+                <ListSubheader>
+                  <GroupHeader
+                    text={date}
+                    threshold={threshold}
+                    current={sumOfConsumedCalories}
+                  />
+                </ListSubheader>
+                {entries.map((entry, i) => (
+                  <Fragment key={`entry-${date}-${i}`}>
+                    <Entry entry={entry} />
+                    {entries.length - 1 !== i && <Divider />}
+                  </Fragment>
+                ))}
+              </ul>
+            </li>
+          );
+        })}
       </List>
     </>
   );
