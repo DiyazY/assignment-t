@@ -1,5 +1,6 @@
 # CHANGELOG
 * 06.10.2022
+  * Added `hasky` lib to run pre-commit action in order to mitigate the lack of CICD in gitlab. Now tests run every on every commit 💪.
   * For simplicity, many things on the backend side are hardcoded into static classes, meaning that data will be in memory and the server reloading will clean newly added data. (It is not a good practice and may cause memory leaks. On another hand, it shows that I know memory management very well😀.)
 * 05.10.2022
   * Apparently, I am not eligible to ran any pipelines and leverage CICD. The `.gitlab-ci.yml` file was renamed to `_gitlab-ci.yml` file to prevent gitlab from running endless empty pipelines.
