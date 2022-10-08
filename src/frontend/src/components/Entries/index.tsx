@@ -2,6 +2,7 @@ import { Divider, List, ListSubheader } from "@mui/material";
 import { Fragment } from "react";
 import Entry from "../Entry";
 import GroupHeader from "../GroupHeader";
+import NewEntry from "./NewEntry";
 import { useEntries } from "./useEntries";
 
 export interface EntriesProps {
@@ -10,7 +11,7 @@ export interface EntriesProps {
 }
 
 function Entries({ threshold, userName }: EntriesProps): JSX.Element {
-  const groupedEntries = useEntries(userName);
+  const {entries, add} = useEntries(userName);
   return (
     <>
       <List
@@ -24,7 +25,7 @@ function Entries({ threshold, userName }: EntriesProps): JSX.Element {
         }}
         subheader={<li />}
       >
-        {groupedEntries.map(([date, entries]) => {
+        {entries.map(([date, entries]) => {
           const sumOfConsumedCalories = entries.reduce(
             (prev, curr) => prev + curr.calories,
             0
@@ -50,6 +51,7 @@ function Entries({ threshold, userName }: EntriesProps): JSX.Element {
           );
         })}
       </List>
+      <NewEntry add={add}/>
     </>
   );
 }

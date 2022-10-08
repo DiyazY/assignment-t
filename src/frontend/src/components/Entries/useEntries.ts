@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { RestContext } from "../../App";
 import { EntryModel } from "../../models/entryModel";
+import { format, formatISO, compareDesc } from "date-fns";
 
 export function useEntries(userName: string = "") {
   const { apiManager } = useContext(RestContext);
-  const [groupedEntries, setGroupedEntries] = useState<
+  const [entries, setEntries] = useState<
     [date: string, entries: EntryModel[]][]
   >([]);
   useEffect(() => {
@@ -19,18 +20,57 @@ export function useEntries(userName: string = "") {
             calories: p.calories,
           }))
           .reduce((groups, entry) => {
-            const date = entry.date.toISOString().split("T")[0];
+            const date = format(entry.date, "yyyy-MM-dd");
             if (!groups.has(date)) {
               groups.set(date, []);
             }
             groups.get(date)?.push(entry);
             return groups;
           }, new Map<string, EntryModel[]>());
-        setGroupedEntries(Array.from(groups));
+        setEntries(Array.from(groups));
       });
     return () => {
       controller.abort();
     };
   }, [apiManager, userName]);
-  return groupedEntries;
+  return {
+    entries,
+    add: async (entry: EntryModel): Promise<void> => {
+      try {
+        await apiManager?.post(`entries/${userName}`, {
+          productName: entry.name,
+          consumedAt: formatISO(entry.date),
+          calories: entry.calories,
+        });
+        const entryDate = format(entry.date, "yyyy-MM-dd");
+        const hasDay = entries.some(([date, _entries]) => date === entryDate);
+        if (hasDay) {
+          const sortedEntries: [date: string, entries: EntryModel[]][] =
+            entries.map(([date, entries]) => {
+              if (date === entryDate) {
+                return [
+                  date,
+                  [entry, ...entries].sort((p, n) =>
+                    compareDesc(p.date, n.date)
+                  ),
+                ];
+              } else {
+                return [date, entries];
+              }
+            });
+          setEntries(sortedEntries);
+        } else {
+          const grouped: [date: string, entries: EntryModel[]] = [
+            entryDate,
+            [entry],
+          ];
+          const sortedEntries = [...entries, grouped];
+          setEntries(sortedEntries);
+        }
+      } catch (e) {
+        // TODO: if have a time add more clever way of dealing with an exception
+        console.error(e);
+      }
+    },
+  };
 }
