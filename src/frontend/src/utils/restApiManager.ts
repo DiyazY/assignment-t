@@ -11,7 +11,7 @@ export class RestApiManager {
         Accept: "*/*",
         Authorization: `Bearer ${token}`,
       },
-    }
+    };
   }
 
   get<T>(resource: string, signal: AbortSignal | null = null): Promise<T> {
@@ -22,17 +22,17 @@ export class RestApiManager {
     }).then((response) => response.json());
   }
 
-  post<T>(
+  async post<T>(
     resource: string,
     body: T,
     signal: AbortSignal | null = null
   ): Promise<void> {
-    return fetch(`${BASE_URL}/api/${resource}`, {
-      method: "GET",
+    await fetch(`${BASE_URL}/api/${resource}`, {
+      method: "POST",
       ...this._defaultOptions,
       body: JSON.stringify(body),
       signal,
-    }).then((response) => response.json());
+    });
   }
 }
 

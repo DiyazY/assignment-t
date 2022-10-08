@@ -1,0 +1,5 @@
+.floating {
+  margin: 0px !important;
+  inset: auto 20px 20px auto;
+  position: fixed !important;
+}

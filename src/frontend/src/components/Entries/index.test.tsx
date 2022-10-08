@@ -4,15 +4,16 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { BASE_URL, RestApiManager } from "../../utils/restApiManager";
 import { RestContext } from "../../App";
+import { formatISO } from "date-fns";
 
 const fakeResponse = [
   ...[...Array(10)].map((i) => ({
-    consumedAt: new Date(2022, 10, 23).toISOString(),
+    consumedAt: formatISO(new Date(2022, 10, 23)),
     productName: "Apple",
     calories: 123,
   })),
   ...[...Array(10)].map((i) => ({
-    consumedAt: new Date(2022, 10, 24).toISOString(),
+    consumedAt: formatISO(new Date(2022, 10, 24)),
     productName: "Orange",
     calories: 321,
   })),
@@ -33,7 +34,7 @@ afterAll(() => server.close());
 test("renders 20 entries for 2 days", async () => {
   render(
     <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
-      <Entries threshold={2100}/>
+      <Entries threshold={2100} />
     </RestContext.Provider>
   );
   const entries = await screen.findAllByTestId("entry");
