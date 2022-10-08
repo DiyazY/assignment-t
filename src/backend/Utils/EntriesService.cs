@@ -17,19 +17,19 @@ namespace backend.Utils
             new EntryModel{ UserName="user1", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2020,10,1,6,10,00)},
             new EntryModel{ UserName="user1", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2020,10,1,7,10,00)},
             new EntryModel{ UserName="user1", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2020,10,1,10,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,10,1,5,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,10,1,6,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,10,1,7,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,10,1,10,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new DateTime(2022,11,1,5,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new DateTime(2022,11,1,8,10,00)},
-            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new DateTime(2022,11,1,9,40,00)},
-            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new DateTime(2022,11,1,10,30,00)},
+            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,8,1,5,10,00)},
+            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,8,1,6,10,00)},
+            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,8,1,7,10,00)},
+            new EntryModel{ UserName="user2", ProductName = "Orange", Calories = 11, ConsumedAt = new DateTime(2022,8,1,10,10,00)},
+            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new  DateTime(2022,8,1,5,10,00)},
+            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new  DateTime(2022,8,1,8,10,00)},
+            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new  DateTime(2022,8,1,9,40,00)},
+            new EntryModel{ UserName="user2", ProductName = "Apple", Calories = 10, ConsumedAt = new  DateTime(2022,8,1,10,30,00)},
         };
 
         public static void SeedData()
         {
-            for (int i = 1; i < 30; i++)
+            for (int i = 1  ; i < 30; i++)
             {
                 for (int j = 1; j < 5; j++)
                 {
