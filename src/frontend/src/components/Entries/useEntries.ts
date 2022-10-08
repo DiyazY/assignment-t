@@ -43,9 +43,9 @@ export function useEntries(userName: string = "") {
           calories: entry.calories,
         });
         const entryDate = format(entry.date, "yyyy-MM-dd");
-        const hasDay = entries.some(([date, entries]) => date === entryDate);
+        const hasDay = entries.some(([date, _entries]) => date === entryDate);
         if (hasDay) {
-          setEntries(
+          const sortedEntries: [date: string, entries: EntryModel[]][] =
             entries.map(([date, entries]) => {
               if (date === entryDate) {
                 return [
@@ -57,8 +57,8 @@ export function useEntries(userName: string = "") {
               } else {
                 return [date, entries];
               }
-            })
-          );
+            });
+          setEntries(sortedEntries);
         } else {
           const grouped: [date: string, entries: EntryModel[]] = [
             entryDate,

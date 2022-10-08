@@ -22,13 +22,16 @@ function NewEntry({ add }: NewEntryProps) {
   const [open, setOpen] = useState(false);
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const target = e.target as typeof e.target & {
+
+    const target = e.currentTarget
+      .elements as typeof e.currentTarget.elements & {
       date: { value: string };
       name: { value: string };
       calories: { value: string };
     };
-    const date = target.date.value;
+
     const name = target.name.value;
+    const date = target.date.value;
     const calories = target.calories.value;
     add({
       date: new Date(date),
@@ -45,6 +48,7 @@ function NewEntry({ add }: NewEntryProps) {
         variant="extended"
         className={styles.floating}
         onClick={() => setOpen(true)}
+        data-testid="add-entry"
       >
         <AddIcon />
         Add Item
@@ -69,19 +73,30 @@ function NewEntry({ add }: NewEntryProps) {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                "data-testid": "new-date",
+              }}
             />
-            <TextField required label="ProductName" type="text" name="name" />
+            <TextField
+              required
+              label="ProductName"
+              type="text"
+              name="name"
+              inputProps={{
+                "data-testid": "new-name",
+              }}
+            />
             <TextField
               required
               label="Calories"
               type="number"
               name="calories"
-              inputProps={{ min: 0 }}
+              inputProps={{ min: 0, "data-testid": "new-calories" }}
               defaultValue={100}
             />
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" data-testid="save-entry">
               Add
             </Button>
           </DialogActions>
