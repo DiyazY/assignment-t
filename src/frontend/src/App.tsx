@@ -6,14 +6,18 @@ import { RestContextType } from "./models/restContextType";
 import Login from "./components/Login";
 import { RestApiManager } from "./utils/restApiManager";
 import { ProfileModel } from "./models/profileModel";
+import AdminView from "./components/AdminView";
 
 export const RestContext = createContext<RestContextType>({
   apiManager: null,
+  profile: null, // for such a small use-case/app, I decided to use the same context
 });
 
 function App() {
   const [token, setToken] = useState<string>("");
+
   const [profile, setProfile] = useState<ProfileModel | null>(null);
+
   const [apiManager, setApiManager] = useState<RestApiManager | null>(null);
 
   useEffect(() => {
@@ -23,8 +27,11 @@ function App() {
 
       setApiManager(api);
       api
-        .get<ProfileModel>("profile", controller.signal)
-        .then((profile) => setProfile(profile));
+        .get<ProfileModel>("profile/my", controller.signal)
+        .then((profile) => setProfile(profile))
+        .catch((err) => {
+          console.log(err);
+        });
     }
     return () => {
       controller.abort();
@@ -35,11 +42,15 @@ function App() {
 
   return (
     <div className="App">
-      <RestContext.Provider value={{ apiManager }}>
+      <RestContext.Provider value={{ apiManager, profile }}>
         {!isLoggedIn && <Login setToken={setToken} />}
-        {isLoggedIn && (
+        {isLoggedIn && profile && (
           <Container maxWidth="sm">
-            <Entries threshold={profile?.threshold || 0} />
+            {profile.role === "Admin" ? (
+              <AdminView />
+            ) : (
+              <Entries threshold={profile.threshold || 0} />
+            )}
           </Container>
         )}
       </RestContext.Provider>

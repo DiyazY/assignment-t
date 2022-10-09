@@ -18,11 +18,13 @@ const fakeResponse = [
     consumedAt: formatISO(new Date(2022, 10, 23)),
     productName: "Apple",
     calories: 123,
+    id: i,
   })),
   ...[...Array(10)].map((i) => ({
     consumedAt: formatISO(new Date(2022, 10, 24)),
     productName: "Orange",
     calories: 321,
+    id: 20 + i,
   })),
 ];
 
@@ -41,7 +43,9 @@ afterAll(() => server.close());
 describe("testing entries", () => {
   test("it should render 20 entries for 2 days", async () => {
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
@@ -55,12 +59,21 @@ describe("testing entries", () => {
 
   test("it should add a new entry, it will also create a new group section", async () => {
     server.use(
-      rest.post(`${BASE_URL}/api/entries`, (req, res, ctx) => {
-        return res(ctx.status(201));
+      rest.post(`${BASE_URL}/api/entries/`, (req, res, ctx) => {
+        return res(
+          ctx.json({
+            consumedAt: formatISO(new Date()),
+            productName: "Beshparmaq",
+            calories: 500,
+            id: 100,
+          })
+        );
       })
     );
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
@@ -100,12 +113,21 @@ describe("testing entries", () => {
 
   test("it should add a new entry, but it will not create a new group section", async () => {
     server.use(
-      rest.post(`${BASE_URL}/api/entries`, (req, res, ctx) => {
-        return res(ctx.status(201));
+      rest.post(`${BASE_URL}/api/entries/`, (req, res, ctx) => {
+        return res(
+          ctx.json({
+            consumedAt: formatISO(new Date(2022, 10, 23)),
+            productName: "Beshparmaq",
+            calories: 500,
+            id: 100,
+          })
+        );
       })
     );
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
@@ -148,13 +170,10 @@ describe("testing entries", () => {
   });
 
   test("it should not add a new entry because one required field is empty(name)", async () => {
-    server.use(
-      rest.post(`${BASE_URL}/api/entries`, (req, res, ctx) => {
-        return res(ctx.status(201));
-      })
-    );
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
@@ -190,7 +209,9 @@ describe("testing entries", () => {
 
   test("it should render only 10 entries with a filter is set up to {from: 2022-10-24, to: null}", async () => {
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
@@ -202,15 +223,21 @@ describe("testing entries", () => {
     });
 
     await userEvent.click(screen.getByTestId("filter-entries"));
-    const entries = await screen.findAllByTestId("entry");
-    expect(entries.length).toBe(10);
-    const headers = await screen.findAllByTestId("header");
-    expect(headers.length).toBe(1);
+    await waitFor(async () => {
+      const entries = await screen.findAllByTestId("entry");
+      expect(entries.length).toBe(10);
+    });
+    await waitFor(async () => {
+      const headers = await screen.findAllByTestId("header");
+      expect(headers.length).toBe(1);
+    });
   });
 
   test("it should render only 10 entries with a filter is set up to {from: null, to: 2022-10-23}", async () => {
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
@@ -230,7 +257,9 @@ describe("testing entries", () => {
 
   test("it should render only 10 entries with a filter is set up to {from: 2022-10-23, to: 2022-10-24}", async () => {
     render(
-      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+      <RestContext.Provider
+        value={{ apiManager: new RestApiManager(""), profile: null }}
+      >
         <Entries threshold={2100} />
       </RestContext.Provider>
     );
