@@ -14,7 +14,6 @@ namespace backend.Controllers
     [Route("api/[controller]"), Authorize]
     public class EntriesController : Controller
     {
-        // GET: api/values
         [HttpGet]
         public IEnumerable<EntryModel> Get()
         {
@@ -22,31 +21,39 @@ namespace backend.Controllers
             return EntriesService.GetEntries(userName);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{userName}")]
+        [Authorize(Roles = "Admin")]
+        public IEnumerable<EntryModel> Get([FromRoute]string userName)
         {
-            return "value";
+            return EntriesService.GetEntries(userName);
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody] EntryModel entry)
+        public  EntryModel Post([FromBody] EntryModel entry)
         {
             var userName = HttpContext?.User?.Identity?.Name ?? "";
-            EntriesService.AddNewEntry(entry, userName);
+            return EntriesService.AddNewEntry(entry, userName);
         }
 
-        // PUT api/values/5
+        [HttpPost("{userName}")]
+        [Authorize(Roles = "Admin")]
+        public EntryModel Post([FromBody] EntryModel entry, [FromRoute] string userName)
+        {
+            return EntriesService.AddNewEntry(entry, userName);
+        }
+
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize(Roles = "Admin")]
+        public EntryModel? Put(int id, [FromBody] EntryModel entry)
         {
+            return EntriesService.UpdateEntry(id, entry);
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize(Roles = "Admin")]
+        public EntryModel? Delete(int id)
         {
+            return EntriesService.RemoveEntry(id);
         }
     }
 }

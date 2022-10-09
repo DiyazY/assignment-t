@@ -18,6 +18,17 @@ namespace backend.Utils
             }
             return profile;
         }
+
+        public static IEnumerable<ProfileDTO> GetAllProfiles()
+        {
+            List<ProfileDTO> profiles = new List<ProfileDTO>();
+            var users = AuthManager.GetAllUsers();
+            foreach (var user in users)
+            {
+                profiles.Add(GetProfile(user));
+            }            
+            return profiles.Where(p=>p.Role != "Admin");
+        }
     }
 }
 

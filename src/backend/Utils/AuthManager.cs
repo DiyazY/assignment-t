@@ -14,6 +14,11 @@ namespace backend.Utils
             new LoginDTO(){UserName = "user2", Password="user2"},
         };
 
+        public static IEnumerable<string> GetAllUsers()
+        {
+            return _authDb.Select(p => p.UserName);
+        }
+
         public static bool CheckPassword(string userName, string password)
         {
             var user = _authDb.Find(p => p.UserName == userName);
