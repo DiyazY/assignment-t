@@ -3,7 +3,13 @@ import { RestContext } from "../../App";
 import { EntryModel } from "../../models/entryModel";
 import { format, formatISO, compareDesc } from "date-fns";
 
+export type Filter = { from: Date | null; to: Date | null };
+
 export function useEntries(userName: string = "") {
+  const [filter, setFilter] = useState<Filter>({
+    from: null,
+    to: null,
+  });
   const { apiManager } = useContext(RestContext);
   const [entries, setEntries] = useState<
     [date: string, entries: EntryModel[]][]
@@ -34,7 +40,7 @@ export function useEntries(userName: string = "") {
     };
   }, [apiManager, userName]);
   return {
-    entries,
+    entries: filterEntries(entries, filter),
     add: async (entry: EntryModel): Promise<void> => {
       try {
         await apiManager?.post(`entries/${userName}`, {
@@ -64,7 +70,7 @@ export function useEntries(userName: string = "") {
             entryDate,
             [entry],
           ];
-          const sortedEntries = [...entries, grouped];
+          const sortedEntries = [grouped, ...entries];
           setEntries(sortedEntries);
         }
       } catch (e) {
@@ -72,5 +78,25 @@ export function useEntries(userName: string = "") {
         console.error(e);
       }
     },
+    setFilter,
   };
+}
+
+const getDate = (date: Date | null) =>
+  (date && format(date, "yyyy-MM-dd")) || "";
+
+function filterEntries(
+  entries: [date: string, entries: EntryModel[]][],
+  { from = null, to = null }: Filter
+): [date: string, entries: EntryModel[]][] {
+  const fromIso = getDate(from);
+  const toIso = getDate(to);
+  if (fromIso && toIso) {
+    return entries.filter(([date, _]) => fromIso <= date && toIso >= date);
+  } else if (fromIso) {
+    return entries.filter(([date, _]) => fromIso <= date);
+  } else if (toIso) {
+    return entries.filter(([date, _]) => toIso >= date);
+  }
+  return entries;
 }

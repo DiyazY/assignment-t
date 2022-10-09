@@ -19,6 +19,7 @@ Audience: technical specialists
 
 # CHANGELOG
 * 09.10.2022
+  * I decided to implement all data filtering on a frontend side though it is not a proper way of fetching and filtering data. The prime reason is that this assignment is focused on a frontend development, but to implement backend pagination and filtering I have to spend some amount of time on backend side, which I consider is not wise for this assignment. 
   * The C4 Model was chosen for visualising the system architecture. It is lightweight and easy to use!
 * 06.10.2022
   * Added `hasky` lib to run pre-commit action in order to mitigate the lack of CICD in gitlab. Now tests run every on every commit 💪.
