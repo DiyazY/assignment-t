@@ -13,13 +13,18 @@ import { EntryModel } from "../../models/entryModel";
 import styles from "./index.module.css";
 import { useState } from "react";
 import { format } from "date-fns";
-
+import NAutocomplete from "../NAutocomplete";
+import { FoodModel } from "../../models/nutritionModels";
 export interface NewEntryProps {
   add: (entry: EntryModel) => Promise<void>;
 }
 
 function NewEntry({ add }: NewEntryProps) {
   const [open, setOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<FoodModel | null>(
+    null
+  );
+  const [calories, setCalories] = useState<number>(0);
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -37,7 +42,16 @@ function NewEntry({ add }: NewEntryProps) {
       date: new Date(date),
       name,
       calories: parseInt(calories),
-    }).then(() => setOpen(false));
+    }).then(() => {
+      setOpen(false);
+      setSelectedProduct(null);
+      setCalories(0);
+    });
+  };
+
+  const onSelect = (food: FoodModel) => {
+    setSelectedProduct(food);
+    setCalories(food.calories);
   };
 
   return (
@@ -77,22 +91,19 @@ function NewEntry({ add }: NewEntryProps) {
                 "data-testid": "new-date",
               }}
             />
-            <TextField
-              required
-              label="ProductName"
-              type="text"
+            <NAutocomplete
+              value={selectedProduct}
               name="name"
-              inputProps={{
-                "data-testid": "new-name",
-              }}
+              onChange={onSelect}
             />
             <TextField
               required
+              value={calories}
+              onChange={(e) => setCalories(parseInt(e.target.value))}
               label="Calories"
               type="number"
               name="calories"
               inputProps={{ min: 0, "data-testid": "new-calories" }}
-              defaultValue={100}
             />
           </DialogContent>
           <DialogActions>

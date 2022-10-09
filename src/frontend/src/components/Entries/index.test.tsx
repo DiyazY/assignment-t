@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import Entries from ".";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
@@ -71,32 +71,25 @@ describe("testing entries", () => {
       target: { value: format(new Date(), "yyyy-MM-dd'T'HH:mm") },
     });
 
-    const nameInput = screen.getByTestId("new-name");
+    const nameInput = screen.getByTestId("nutrition-select");
     expect(nameInput).toBeInTheDocument();
     await userEvent.type(nameInput, "Beshparmaq");
 
     const caloriesInput = screen.getByTestId("new-calories");
     expect(caloriesInput).toBeInTheDocument();
-    await userEvent.clear(caloriesInput);
     await userEvent.type(caloriesInput, "500");
 
     const saveButton = screen.getByTestId("save-entry");
     await userEvent.click(saveButton);
 
-    await waitFor(
-      async () => {
-        const entriesWithNewlyAdded = await screen.findAllByTestId("entry");
-        expect(entriesWithNewlyAdded.length).toBe(21);
-      },
-      { timeout: 100 }
-    );
-    await waitFor(
-      async () => {
-        const headers = await screen.findAllByTestId("header");
-        expect(headers.length).toBe(3); // 3 groups
-      },
-      { timeout: 100 }
-    );
+    await waitFor(async () => {
+      const entriesWithNewlyAdded = await screen.findAllByTestId("entry");
+      expect(entriesWithNewlyAdded.length).toBe(21);
+    });
+    await waitFor(async () => {
+      const headers = await screen.findAllByTestId("header");
+      expect(headers.length).toBe(3); // 3 groups
+    });
   });
 
   test("it should add a new entry, but it will not create a new group section", async () => {
@@ -123,32 +116,29 @@ describe("testing entries", () => {
       target: { value: format(new Date(2022, 10, 23), "yyyy-MM-dd'T'HH:mm") }, // this date is already in a test set
     });
 
-    const nameInput = screen.getByTestId("new-name");
-    expect(nameInput).toBeInTheDocument();
-    await userEvent.type(nameInput, "Beshparmaq");
+    const autocomplete = screen.getByTestId("nutrition-select");
+    const input = within(autocomplete).getByRole("combobox");
+    autocomplete.focus();
+    await userEvent.type(input, "Beshparmaq");
+    expect(input).toHaveValue("Beshparmaq");
+    const selection = screen.getAllByText(/Beshparmaq/i)[0];
+    await userEvent.click(selection);
 
     const caloriesInput = screen.getByTestId("new-calories");
     expect(caloriesInput).toBeInTheDocument();
-    await userEvent.clear(caloriesInput);
     await userEvent.type(caloriesInput, "500");
 
     const saveButton = screen.getByTestId("save-entry");
     await userEvent.click(saveButton);
 
-    await waitFor(
-      async () => {
-        const entriesWithNewlyAdded = await screen.findAllByTestId("entry");
-        expect(entriesWithNewlyAdded.length).toBe(21);
-      },
-      { timeout: 100 }
-    );
-    await waitFor(
-      async () => {
-        const headers = await screen.findAllByTestId("header");
-        expect(headers.length).toBe(2); // 2 groups
-      },
-      { timeout: 100 }
-    );
+    await waitFor(async () => {
+      const entriesWithNewlyAdded = await screen.findAllByTestId("entry");
+      expect(entriesWithNewlyAdded.length).toBe(21);
+    });
+    await waitFor(async () => {
+      const headers = await screen.findAllByTestId("header");
+      expect(headers.length).toBe(2); // 2 groups
+    });
   });
 
   test("it should not add a new entry because one required field is empty(name)", async () => {
@@ -177,25 +167,18 @@ describe("testing entries", () => {
 
     const caloriesInput = screen.getByTestId("new-calories");
     expect(caloriesInput).toBeInTheDocument();
-    await userEvent.clear(caloriesInput);
     await userEvent.type(caloriesInput, "500");
 
     const saveButton = screen.getByTestId("save-entry");
     await userEvent.click(saveButton);
 
-    await waitFor(
-      async () => {
-        const entriesWithNewlyAdded = await screen.findAllByTestId("entry");
-        expect(entriesWithNewlyAdded.length).toBe(20);
-      },
-      { timeout: 100 }
-    );
-    await waitFor(
-      async () => {
-        const headers = await screen.findAllByTestId("header");
-        expect(headers.length).toBe(2);
-      },
-      { timeout: 100 }
-    );
+    await waitFor(async () => {
+      const entriesWithNewlyAdded = await screen.findAllByTestId("entry");
+      expect(entriesWithNewlyAdded.length).toBe(20);
+    });
+    await waitFor(async () => {
+      const headers = await screen.findAllByTestId("header");
+      expect(headers.length).toBe(2);
+    });
   });
 });
