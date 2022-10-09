@@ -2,6 +2,7 @@ import { Divider, List, ListSubheader } from "@mui/material";
 import { Fragment } from "react";
 import Entry from "../Entry";
 import GroupHeader from "../GroupHeader";
+import FilterHeader from "./Filter";
 import NewEntry from "./NewEntry";
 import { useEntries } from "./useEntries";
 
@@ -11,16 +12,17 @@ export interface EntriesProps {
 }
 
 function Entries({ threshold, userName }: EntriesProps): JSX.Element {
-  const {entries, add} = useEntries(userName);
+  const { entries, add, setFilter } = useEntries(userName);
   return (
     <>
+      <FilterHeader setFilter={setFilter}/>
       <List
         sx={{
           width: "100%",
           bgcolor: "background.paper",
           position: "relative",
           overflow: "auto",
-          maxHeight: "100vh",
+          maxHeight: "90vh",
           "& ul": { padding: 0 },
         }}
         subheader={<li />}
@@ -51,7 +53,7 @@ function Entries({ threshold, userName }: EntriesProps): JSX.Element {
           );
         })}
       </List>
-      <NewEntry add={add}/>
+      <NewEntry add={add} />
     </>
   );
 }

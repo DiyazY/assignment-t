@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import Entries from ".";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
@@ -180,5 +186,70 @@ describe("testing entries", () => {
       const headers = await screen.findAllByTestId("header");
       expect(headers.length).toBe(2);
     });
+  });
+
+  test("it should render only 10 entries with a filter is set up to {from: 2022-10-24, to: null}", async () => {
+    render(
+      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+        <Entries threshold={2100} />
+      </RestContext.Provider>
+    );
+
+    const filterInput = screen.getByTestId("filter-from");
+    expect(filterInput).toBeInTheDocument();
+    fireEvent.change(filterInput, {
+      target: { value: "2022-11-24" },
+    });
+
+    await userEvent.click(screen.getByTestId("filter-entries"));
+    const entries = await screen.findAllByTestId("entry");
+    expect(entries.length).toBe(10);
+    const headers = await screen.findAllByTestId("header");
+    expect(headers.length).toBe(1);
+  });
+
+  test("it should render only 10 entries with a filter is set up to {from: null, to: 2022-10-23}", async () => {
+    render(
+      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+        <Entries threshold={2100} />
+      </RestContext.Provider>
+    );
+
+    const filterInput = screen.getByTestId("filter-to");
+    expect(filterInput).toBeInTheDocument();
+    fireEvent.change(filterInput, {
+      target: { value: "2022-11-23" },
+    });
+
+    await userEvent.click(screen.getByTestId("filter-entries"));
+    const entries = await screen.findAllByTestId("entry");
+    expect(entries.length).toBe(10);
+    const headers = await screen.findAllByTestId("header");
+    expect(headers.length).toBe(1);
+  });
+
+  test("it should render only 10 entries with a filter is set up to {from: 2022-10-23, to: 2022-10-24}", async () => {
+    render(
+      <RestContext.Provider value={{ apiManager: new RestApiManager("") }}>
+        <Entries threshold={2100} />
+      </RestContext.Provider>
+    );
+
+    const filterInputFrom = screen.getByTestId("filter-from");
+    expect(filterInputFrom).toBeInTheDocument();
+    fireEvent.change(filterInputFrom, {
+      target: { value: "2022-11-23" },
+    });
+    const filterInputTo = screen.getByTestId("filter-to");
+    expect(filterInputTo).toBeInTheDocument();
+    fireEvent.change(filterInputTo, {
+      target: { value: "2022-11-24" },
+    });
+
+    await userEvent.click(screen.getByTestId("filter-entries"));
+    const entries = await screen.findAllByTestId("entry");
+    expect(entries.length).toBe(20);
+    const headers = await screen.findAllByTestId("header");
+    expect(headers.length).toBe(2);
   });
 });
