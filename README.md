@@ -1,4 +1,25 @@
+# HOW TO RUN FOR DEV
+* backend: `cd src/backend;dotnet run` 
+  * requires installing .NET SDK
+* frontend: `cd src/frontend;npm i;npm start` 
+  * requires installing nodejs
+
+# BIG PICTURE
+ The context diagram below illustrates the system and the world around it or context, where the context is its users and external systems.  
+
+ ![Context view](./docs/Context-View.png)  
+Audience: business people and technical specialists
+
+# SYSTEM OVERVIEW
+The container diagram depicts the system architecture on a container level (container - self deployable application), it also shows how different parts of the system interacts with each other and with external participants.  
+
+ ![Context view](./docs/Containers-View.png)  
+Audience: technical specialists
+
+
 # CHANGELOG
+* 09.10.2022
+  * The C4 Model was chosen for visualising the system architecture. It is lightweight and easy to use!
 * 06.10.2022
   * Added `hasky` lib to run pre-commit action in order to mitigate the lack of CICD in gitlab. Now tests run every on every commit 💪.
   * For simplicity, many things on the backend side are hardcoded into static classes, meaning that data will be in memory and the server reloading will clean newly added data. (It is not a good practice and may cause memory leaks. On another hand, it shows that I know memory management very well😀.)

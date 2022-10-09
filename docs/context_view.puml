@@ -1,0 +1,28 @@
+@startuml Context-View
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_LEFT_RIGHT()
+
+header toptal:Diyaz Yakubov
+
+title Context View
+
+Person(user, "User", "person who is interested in tracking calories.")
+Person(admin, "Admin", "person who is providing maintenance and support for the system and clients respectively.")
+System(app, "Simple Calories App", "Provides a simple solution for tracking calories.")
+
+System_Ext(nutrition, "Nutritionix API", "Exposes food information as Open Api using open standard web service interfaces. Provides fast results for autocomplete text box interfaces.")
+
+Rel(app,nutrition, "fetches food data (name, calories, etc.)", "HTTPS/Open Api")
+Rel(user,app, "uses app to manage calories consumption", "via Web app")
+Rel(admin,app, "manages app and its users", "via Web app")
+
+legend left
+|<color:$LEGEND_TITLE_COLOR>**Legend**</color> |
+|<$PERSON_BG_COLOR> person |
+|<$SYSTEM_BG_COLOR> system |
+|<$EXTERNAL_SYSTEM_BG_COLOR> external system |
+|<color:$LEGEND_TITLE_COLOR> relationship <img:./arrow.png{scale=0.07}></color> |
+endlegend
+
+@enduml

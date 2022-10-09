@@ -1,0 +1,35 @@
+@startuml Containers-View
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LEFT_RIGHT()
+
+header toptal:Diyaz Yakubov
+
+title Containers View
+
+Person(user, "User", "person who is interested in tracking calories.")
+Person(admin, "Admin", "person who is providing maintenance and support for the system and clients respectively.")
+System_Ext(nutrition, "Nutritionix API", "Exposes food information as Open Api using open standard web service interfaces. Provides fast results for autocomplete text box interfaces.")
+
+System_Boundary(c1, "Simple Calories App") {
+    Container(fe, "Client Application", "ReactJs/Typescript", "UI application for end users")
+    Container(be, "Backend Application", "Asp.NET Core 6/.NET6/C#", "Serves requests from Client Application, particularly, it stores&retrieves users' food entries.  \r\n Note: all data is stored in memory! the type of storage could be defined later if needed.")
+    
+    Rel(fe, be, "fetches data from/ sends commands to", "HTTPS")
+
+
+Rel(user,fe, "uses app to manage calories consumption", "via Web Browser/HTTPS")
+Rel(admin,fe, "manages app and its users", "via Web Browser/HTTPS")
+
+Rel(be,nutrition, "fetches food data (name, calories, etc.)", "HTTPS/Open Api")
+
+legend left
+|<color:$LEGEND_TITLE_COLOR>**Legend**</color> |
+|<$PERSON_BG_COLOR> person |
+|<$CONTAINER_BG_COLOR> container |
+|<$EXTERNAL_SYSTEM_BG_COLOR> external system |
+|<color:$LEGEND_TITLE_COLOR> relationship <img:./arrow.png{scale=0.07}></color> |
+|<color:$LEGEND_TITLE_COLOR> boundary    <img:./boundary.png{scale=0.07}></color> |
+endlegend
+
+@enduml
