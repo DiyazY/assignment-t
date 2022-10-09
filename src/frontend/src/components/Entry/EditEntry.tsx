@@ -8,23 +8,25 @@ import {
   Fab,
   TextField,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import { EntryModel } from "../../models/entryModel";
-import styles from "./index.module.css";
 import { useState } from "react";
 import { format } from "date-fns";
 import NAutocomplete from "../NAutocomplete";
 import { FoodModel } from "../../models/nutritionModels";
+import EditIcon from "@mui/icons-material/Edit";
+
 export interface NewEntryProps {
-  add: (entry: EntryModel) => Promise<void>;
+  entry: EntryModel;
+  update: (entry: EntryModel) => Promise<void>;
 }
 
-function NewEntry({ add }: NewEntryProps) {
+function EditEntry({ entry, update }: NewEntryProps) {
   const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<FoodModel | null>(
-    null
-  );
-  const [calories, setCalories] = useState<number>(0);
+  const [selectedProduct, setSelectedProduct] = useState<FoodModel | null>({
+    name: entry.name,
+    calories: entry.calories,
+  });
+  const [calories, setCalories] = useState<number>(entry.calories);
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -38,14 +40,13 @@ function NewEntry({ add }: NewEntryProps) {
     const name = target.name.value;
     const date = target.date.value;
     const calories = target.calories.value;
-    add({
+    update({
+      id: entry.id,
       date: new Date(date),
       name,
       calories: parseInt(calories),
     }).then(() => {
       setOpen(false);
-      setSelectedProduct(null);
-      setCalories(0);
     });
   };
 
@@ -57,18 +58,16 @@ function NewEntry({ add }: NewEntryProps) {
   return (
     <>
       <Fab
-        color="primary"
-        aria-label="add"
-        variant="extended"
-        className={styles.floating}
+        color="info"
+        size="small"
+        aria-label="edit"
+        data-testid="edit-entry"
         onClick={() => setOpen(true)}
-        data-testid="add-entry"
       >
-        <AddIcon />
-        Add Item
+        <EditIcon />
       </Fab>
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm">
-        <DialogTitle>Add new entry</DialogTitle>
+        <DialogTitle>Editing entry</DialogTitle>
         <Box
           component="form"
           sx={{
@@ -83,12 +82,12 @@ function NewEntry({ add }: NewEntryProps) {
               label="Date-Time"
               type="datetime-local"
               name="date"
-              defaultValue={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
+              defaultValue={format(entry.date, "yyyy-MM-dd'T'HH:mm")}
               InputLabelProps={{
                 shrink: true,
               }}
               inputProps={{
-                "data-testid": "new-date",
+                "data-testid": "update-date",
               }}
             />
             <NAutocomplete
@@ -106,12 +105,16 @@ function NewEntry({ add }: NewEntryProps) {
               label="Calories"
               type="number"
               name="calories"
-              inputProps={{ min: 0, "data-testid": "new-calories" }}
+              inputProps={{ min: 0, "data-testid": "update-calories" }}
             />
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" type="submit" data-testid="save-entry">
-              Add
+            <Button
+              variant="contained"
+              type="submit"
+              data-testid="update-entry"
+            >
+              Update
             </Button>
           </DialogActions>
         </Box>
@@ -120,4 +123,4 @@ function NewEntry({ add }: NewEntryProps) {
   );
 }
 
-export default NewEntry;
+export default EditEntry;

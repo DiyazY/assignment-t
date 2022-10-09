@@ -12,7 +12,7 @@ namespace backend.Controllers
     [Route("api/[controller]"), Authorize]
     public class ProfileController : Controller
     {
-        [HttpGet]
+        [HttpGet("my")]
         public ProfileDTO Get()
         {
             var userName = HttpContext?.User?.Identity?.Name ?? "";
@@ -24,6 +24,13 @@ namespace backend.Controllers
         public ProfileDTO Get([FromRoute] string userName)
         {
             return ProfileManager.GetProfile(userName);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IEnumerable<ProfileDTO> GetAllProfiles()
+        {
+            return ProfileManager.GetAllProfiles();
         }
     }
 }

@@ -1,5 +1,5 @@
 export interface ProfileModel {
-  role: string;
+  role: "User" | "Admin";
   threshold: number;
   userName: string;
 }

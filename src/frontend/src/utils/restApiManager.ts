@@ -21,17 +21,38 @@ export class RestApiManager {
     }).then((response) => response.json());
   }
 
-  async post<T>(
+  delete<T>(resource: string, signal: AbortSignal | null = null): Promise<T> {
+    return fetch(`${BASE_URL}/api/${resource}`, {
+      method: "DELETE",
+      ...this._defaultOptions,
+      signal,
+    }).then((response) => response.json());
+  }
+
+  async post<T,K>(
     resource: string,
     body: T,
     signal: AbortSignal | null = null
-  ): Promise<void> {
-    await fetch(`${BASE_URL}/api/${resource}`, {
+  ): Promise<K> {
+    return fetch(`${BASE_URL}/api/${resource}`.trim(), {
       method: "POST",
       ...this._defaultOptions,
       body: JSON.stringify(body),
       signal,
-    });
+    }).then((response) => response.json());
+  }
+
+  async put<T,K>(
+    resource: string,
+    body: T,
+    signal: AbortSignal | null = null
+  ): Promise<K> {
+    return fetch(`${BASE_URL}/api/${resource}`, {
+      method: "PUT",
+      ...this._defaultOptions,
+      body: JSON.stringify(body),
+      signal,
+    }).then((response) => response.json());
   }
 }
 

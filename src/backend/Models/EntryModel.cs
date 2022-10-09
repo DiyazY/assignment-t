@@ -11,6 +11,7 @@ namespace backend.Models
         public DateTime ConsumedAt { get; set; }
         [Required]
         public int Calories { get; set; }
+        public int Id { get; set; }
 
         internal string UserName { get; set; } = string.Empty;
     }

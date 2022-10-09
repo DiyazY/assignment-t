@@ -6,6 +6,7 @@ import { format, formatISO, compareDesc } from "date-fns";
 export type Filter = { from: Date | null; to: Date | null };
 
 export function useEntries(userName: string = "") {
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>({
     from: null,
     to: null,
@@ -16,6 +17,7 @@ export function useEntries(userName: string = "") {
   >([]);
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
     apiManager
       ?.get<any[]>(`entries/${userName}`, controller.signal)
       .then((data) => {
@@ -24,6 +26,7 @@ export function useEntries(userName: string = "") {
             date: new Date(p.consumedAt),
             name: p.productName,
             calories: p.calories,
+            id: p.id,
           }))
           .reduce((groups, entry) => {
             const date = format(entry.date, "yyyy-MM-dd");
@@ -34,6 +37,12 @@ export function useEntries(userName: string = "") {
             return groups;
           }, new Map<string, EntryModel[]>());
         setEntries(Array.from(groups));
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
     return () => {
       controller.abort();
@@ -43,11 +52,12 @@ export function useEntries(userName: string = "") {
     entries: filterEntries(entries, filter),
     add: async (entry: EntryModel): Promise<void> => {
       try {
-        await apiManager?.post(`entries/${userName}`, {
-          productName: entry.name,
-          consumedAt: formatISO(entry.date),
-          calories: entry.calories,
-        });
+        const savedEntry =
+          (await apiManager?.post<any, EntryModel>(`entries/${userName}`, {
+            productName: entry.name,
+            consumedAt: formatISO(entry.date),
+            calories: entry.calories,
+          })) || entry;
         const entryDate = format(entry.date, "yyyy-MM-dd");
         const hasDay = entries.some(([date, _entries]) => date === entryDate);
         if (hasDay) {
@@ -56,7 +66,7 @@ export function useEntries(userName: string = "") {
               if (date === entryDate) {
                 return [
                   date,
-                  [entry, ...entries].sort((p, n) =>
+                  [{ id: savedEntry.id, ...entry }, ...entries].sort((p, n) =>
                     compareDesc(p.date, n.date)
                   ),
                 ];
@@ -68,7 +78,7 @@ export function useEntries(userName: string = "") {
         } else {
           const grouped: [date: string, entries: EntryModel[]] = [
             entryDate,
-            [entry],
+            [{ id: savedEntry.id, ...entry }],
           ];
           const sortedEntries = [grouped, ...entries];
           setEntries(sortedEntries);
@@ -78,7 +88,53 @@ export function useEntries(userName: string = "") {
         console.error(e);
       }
     },
+    remove: async (id: number): Promise<void> => {
+      const removedEntry = await apiManager?.delete<any>(`entries/${id}`);
+
+      if (removedEntry) {
+        const entryDate = format(
+          new Date(removedEntry.consumedAt),
+          "yyyy-MM-dd"
+        );
+        const sortedEntries: [date: string, entries: EntryModel[]][] =
+          entries.map(([date, entries]) => {
+            if (date === entryDate) {
+              return [date, entries.filter((p) => p.id !== id)];
+            } else {
+              return [date, entries];
+            }
+          });
+        setEntries(sortedEntries);
+      }
+    },
+    update: async (entry: EntryModel) => {
+      const updatedEntry = await apiManager?.put<any, EntryModel>(
+        `entries/${entry.id}`,
+        {
+          productName: entry.name,
+          consumedAt: formatISO(entry.date),
+          calories: entry.calories,
+          id: entry.id,
+        }
+      );
+      if (updatedEntry) { // TODO: update remove add have similar code structures... could be polished!
+        const entryDate = format(entry.date, "yyyy-MM-dd");
+        const sortedEntries: [date: string, entries: EntryModel[]][] =
+          entries.map(([date, entries]) => {
+            if (date === entryDate) {
+              return [
+                date,
+                entries.map((p) => (p.id === entry.id ? entry : p)),
+              ];
+            } else {
+              return [date, entries];
+            }
+          });
+        setEntries(sortedEntries);
+      }
+    },
     setFilter,
+    loading,
   };
 }
 
