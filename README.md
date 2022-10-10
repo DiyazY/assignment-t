@@ -1,8 +1,3 @@
-# HOW TO RUN FOR DEV
-* backend: `cd src/backend;dotnet run` 
-  * requires installing .NET SDK
-* frontend: `cd src/frontend;npm i;npm start` 
-  * requires installing nodejs
 
 # BIG PICTURE
  The context diagram below illustrates the system and the world around it or context, where the context is its users and external systems.  
@@ -16,9 +11,15 @@ The container diagram depicts the system architecture on a container level (cont
  ![Context view](./docs/Containers-View.png)  
 Audience: technical specialists
 
+# HOW TO RUN FOR DEV
+* backend: `cd src/backend;dotnet run` 
+  * requires installing .NET SDK
+* frontend: `cd src/frontend;npm i;npm start` 
+  * requires installing nodejs
 
 # CHANGELOG
 * 09.10.2022
+  * I have plenty of things to improve in this solution, and I can point at them, describe and provide reasons why I didn't make it.
   * I decided to implement all data filtering on a frontend side though it is not a proper way of fetching and filtering data. The prime reason is that this assignment is focused on a frontend development, but to implement backend pagination and filtering I have to spend some amount of time on backend side, which I consider is not wise for this assignment. 
   * The C4 Model was chosen for visualising the system architecture. It is lightweight and easy to use!
 * 06.10.2022
